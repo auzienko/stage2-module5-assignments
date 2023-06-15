@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.lang.StringBuilder;
 
 import assignments.annotations.FullNameProcessorGeneratorAnnotation;
 import assignments.annotations.ListIteratorAnnotation;
@@ -37,12 +38,13 @@ public class LocalProcessor {
 
     @ListIteratorAnnotation
     public void listIterator(List<String> stringList) {
-        int i = -1;
-        for (String str : stringList) {
-            if (++i >= period) {
-                break;
+        stringArrayList = new LinkedList<>(stringList);
+        try {
+            for (int i = 0; i < period; i++) {
+                System.out.println(stringArrayList.get(i).hashCode());
             }
-            System.out.println(str.hashCode());
+        } catch (Exception e) {
+            throw new IllegalStateException();
         }
     }
 
