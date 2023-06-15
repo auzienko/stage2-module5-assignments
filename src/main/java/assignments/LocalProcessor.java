@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.lang.StringBuilder;
 
 import assignments.annotations.FullNameProcessorGeneratorAnnotation;
 import assignments.annotations.ListIteratorAnnotation;
@@ -16,14 +15,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LocalProcessor {
-    private String processorName;
+    private StringBuilder processorName;
     private Long period = 10_000_000_000_000L;
-    private String processorVersion;
+    private StringBuilder processorVersion;
     private Integer valueOfCheap;
     private Scanner informationScanner;
     private List<String> stringArrayList = new LinkedList<>();
 
-    public LocalProcessor(String processorName, Long period, String processorVersion, Integer valueOfCheap,
+    public LocalProcessor(StringBuilder processorName, Long period, StringBuilder processorVersion, Integer valueOfCheap,
                           Scanner informationScanner, List<String> stringArrayList) {
         this.processorName = processorName;
         this.period = period;
@@ -41,7 +40,9 @@ public class LocalProcessor {
         stringArrayList = new LinkedList<>(stringList);
         try {
             for (int i = 0; i < period; i++) {
-                System.out.println(stringArrayList.get(i).hashCode());
+                if (stringArrayList.get(i) != null) {
+                    System.out.println(stringArrayList.get(i).hashCode());
+                }
             }
         } catch (Exception e) {
             throw new IllegalStateException();
@@ -50,23 +51,27 @@ public class LocalProcessor {
 
     @FullNameProcessorGeneratorAnnotation
     public String fullNameProcessorGenerator(List<String> stringList) {
-        StringBuilder stringBuilder = new StringBuilder();
         for (String str : stringList) {
-            stringBuilder
+            processorName
                     .append(str)
                     .append(" ");
         }
-        processorName = stringBuilder.toString();
-        return processorName;
+        return processorName.toString();
     }
 
     @ReadFullProcessorNameAnnotation
-    public void readFullProcessorName(File fileName) throws FileNotFoundException {
-        informationScanner = new Scanner(fileName);
-        StringBuilder stringBuilder = new StringBuilder();
-        while (informationScanner.hasNext()) {
-            stringBuilder.append(informationScanner.nextLine());
+    public void readFullProcessorName(File fileName) {
+        try {
+            informationScanner = new Scanner(fileName);
+            while (informationScanner.hasNext()) {
+                processorVersion.append(informationScanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (informationScanner != null) {
+                informationScanner.close();
+            }
         }
-        processorVersion = stringBuilder.toString();
     }
 }
